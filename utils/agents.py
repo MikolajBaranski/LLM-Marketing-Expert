@@ -37,7 +37,7 @@ class MarketingAgent:
         return complete_prompt
     
     def clean_output(self, prompt_output):
-        return json.loads(prompt_output[0]["generated_text"].split("ASSISTANT:\n", 1)[-1].replace(r'\_', '_'))
+        return json.loads(prompt_output[0]["generated_text"].split("ASSISTANT:\\n\n\n", 1)[-1].replace(r'\_', '_'))
     
     def combine_outputs(
             self,
