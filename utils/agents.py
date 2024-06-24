@@ -1,8 +1,7 @@
 from utils.base_prompts import (
     PROMPT_A1,
     PROMPT_A2,
-    PROMPT_B,
-    PROMPT_C
+    PROMPT_B
 )
 from utils.config import (
     IMAGE_RAW_PATH,
@@ -10,7 +9,6 @@ from utils.config import (
     MODEL_ID
 )
 
-import requests
 from PIL import Image
 import json
 from transformers import pipeline
@@ -26,18 +24,24 @@ class MarketingAgent:
             self, 
             image_raw_path: str = IMAGE_RAW_PATH,
             image_heatmap_path: str = IMAGE_HEATMAP_PATH,
-            model_id: str = MODEL_ID
+            model_id: str = MODEL_ID,
+            prompt_A1: str = PROMPT_A1,
+            prompt_A2: str = PROMPT_A2,
+            prompt_B: str = PROMPT_B,
         ):
         self.image_raw = Image.open(image_raw_path)
         self.image_heat = Image.open(image_heatmap_path)
         self.pipe = pipeline("image-to-text", model=model_id)
+        self.prompt_A1 = prompt_A1
+        self.prompt_A2 = prompt_A2
+        self.prompt_B = prompt_B
     
     def format_prompt(self, prompt):
-        complete_prompt = fr'USER: <image>\n {prompt} \nASSISTANT:'
+        complete_prompt = fr'USER: <image>\n {prompt} \nASSISTANT:\n'
         return complete_prompt
     
     def clean_output(self, prompt_output):
-        return json.loads(prompt_output[0]["generated_text"].split("ASSISTANT:\\n\n\n", 1)[-1].replace(r'\_', '_'))
+        return json.loads(prompt_output[0]["generated_text"].split("ASSISTANT:\\n\n", 1)[-1].replace(r'\_', '_'))
     
     def combine_outputs(
             self,
@@ -60,13 +64,18 @@ class MarketingAgent:
         }
         return json_combined
 
-    def run_marketing_prompt(self, image, prompt, json_combined={}, multimodal=True):
-        if multimodal:
-            prompt = self.format_prompt(prompt)
-            prompt_output = self.pipe(image, prompt=prompt, generate_kwargs={"max_new_tokens": 200})
-        else:
-            prompt = f'{prompt} {json_combined}'
-            prompt = self.format_prompt(prompt)
-            prompt_output = self.pipe(prompt=prompt, generate_kwargs={"max_new_tokens": 200})
+    def run_marketing_prompt(self, image, prompt):
+        prompt = self.format_prompt(prompt)
+        prompt_output = self.pipe(image, prompt=prompt, generate_kwargs={"max_new_tokens": 400})
         json_output = self.clean_output(prompt_output)
         return json_output
+    
+    def full_agent_pipe(self, image_raw, image_heat):
+        # Run the agents in order
+        json_output_A1 = self.run_marketing_prompt(image_raw, self.prompt_A1)
+        json_output_A2 = self.run_marketing_prompt(image_heat, self.prompt_A2)
+        json_output_B = self.run_marketing_prompt(image_raw, self.prompt_B)
+
+        # Combine outputs together
+        json_combined = self.combine_outputs(json_output_A1, json_output_A2, json_output_B)
+        return json_combined

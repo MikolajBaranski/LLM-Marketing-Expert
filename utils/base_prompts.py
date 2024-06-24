@@ -25,7 +25,6 @@ Provide the output in the following JSON format
     }
 ]
 ```
-
 In this format, $description is a placeholder for the description of the
 advert, $purpose can only be either "brand-building" or "conversion".
 </response-template>.
@@ -83,9 +82,9 @@ advertisement.
 Provide the output in the following JSON format
 ```
 [
-{
+    {
     "cognitive_description":$description
-}
+    }
 ]
 ```
 In this format, $description is a placeholder for assessment of the cognitive
