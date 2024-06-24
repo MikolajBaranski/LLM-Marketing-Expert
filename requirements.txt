@@ -3,3 +3,4 @@ bitsandbytes==0.41.3
 accelerate==0.25.0
 Pillow==10.3.0
 fastapi==0.111.0
+uvicorn==0.30.1

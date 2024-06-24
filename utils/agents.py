@@ -70,12 +70,16 @@ class MarketingAgent:
         json_output = self.clean_output(prompt_output)
         return json_output
     
-    def full_agent_pipe(self, image_raw, image_heat):
+    def full_agent_pipe(self, image_raw, image_heatmap):
         # Run the agents in order
         json_output_A1 = self.run_marketing_prompt(image_raw, self.prompt_A1)
-        json_output_A2 = self.run_marketing_prompt(image_heat, self.prompt_A2)
+        print("Prompt A1 completed")
+        json_output_A2 = self.run_marketing_prompt(image_heatmap, self.prompt_A2)
+        print("Prompt A2 completed")
         json_output_B = self.run_marketing_prompt(image_raw, self.prompt_B)
+        print("Prompt B completed")
 
         # Combine outputs together
         json_combined = self.combine_outputs(json_output_A1, json_output_A2, json_output_B)
+        print("Done!")
         return json_combined
