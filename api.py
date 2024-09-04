@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from typing import List
 from PIL import Image
 import io
-from utils.agents import MarketingAgent
+from utils.experts import MarketingAgent
 
 # Initialize agent and app
 predict_helper = MarketingAgent()

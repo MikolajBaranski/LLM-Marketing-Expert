@@ -90,35 +90,3 @@ Provide the output in the following JSON format
 In this format, $description is a placeholder for assessment of the cognitive
 load induced by the advertisement in viewers.
 """
-
-# Prompt C - Summarization and text collection
-PROMPT_C = """
-<role>
-You are a professional writer.
-</role>
-<input-overview>
-You are provided with text descriptions that are outputs from two different
-multi-modal LLMs.
-</input-overview>
-<task>
-You have a single task:
-Summarise the text provided from the two different outputs and ensure that the
-JSON format of the final output matches the requirements provided below.
-</task>
-<response-template>
-Provide the final output in the following JSON format
-```
-[
-    {
-        "ad_description":$ad_description,
-        "ad_purpose":$ad_purpose,
-        "saliency_description":$saliency_description,
-        "cognitive_description":$cognitive_description
-    }
-]
-```
-In this format, $ad_description, $ad_purpose, $saliency_description and
-$cognitive_description are placeholders for the summarised versions of the text
-provided as input.
-Here is the text:
-"""
